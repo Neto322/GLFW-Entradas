@@ -13,25 +13,97 @@
 
 using namespace std;
 
-float posXtriangulo = 0.0f, posYtriangulo = 0.0f;
+double tiempoactual, tiempoanterior;
+
+float posXtriangulo = 0.0f, posYtriangulo = 0.0f,rotXtriangulo = 0.0f, rotYtriangulo = 0.0f;
+
+
+//Declarar ventana
+GLFWwindow* window;
+
 
 void teclado_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
+	/*
 	if ((action == GLFW_PRESS || action == GLFW_REPEAT) && (key == GLFW_KEY_RIGHT))
 	{
 		posXtriangulo += 0.01;
 	}
+	if ((action == GLFW_PRESS || action == GLFW_REPEAT) && (key == GLFW_KEY_LEFT))
+	{
+		posXtriangulo -= 0.01;
+	}
+	if ((action == GLFW_PRESS || action == GLFW_REPEAT) && (key == GLFW_KEY_UP))
+	{
+		posYtriangulo += 0.01;
+	}
+	if ((action == GLFW_PRESS || action == GLFW_REPEAT) && (key == GLFW_KEY_DOWN))
+	{
+		posYtriangulo -= 0.01;
+	}
+	*/
 }
 
 void actualizar()
 {
-	posXtriangulo += 0.00001;
+	tiempoactual = glfwGetTime();
+
+	double tiempoDiferencial = tiempoactual - tiempoanterior;
+
+
+	int estadoderecha = glfwGetKey(window, GLFW_KEY_RIGHT);
+
+	if (estadoderecha == GLFW_PRESS)
+	{
+		posXtriangulo += 0.5 * tiempoDiferencial;
+	}
+
+
+	int estadoizquierda = glfwGetKey(window, GLFW_KEY_LEFT);
+
+	if (estadoizquierda == GLFW_PRESS)
+	{
+		posXtriangulo -= 0.5 * tiempoDiferencial;;
+	}
+
+	int estadoarriba = glfwGetKey(window, GLFW_KEY_UP);
+
+	if (estadoarriba == GLFW_PRESS)
+	{
+		posYtriangulo += 0.5 * tiempoDiferencial;;
+	}
+
+	int estadoabajo = glfwGetKey(window, GLFW_KEY_DOWN);
+
+	if (estadoabajo == GLFW_PRESS)
+	{
+		posYtriangulo -= 0.5 * tiempoDiferencial;;
+	}
+
+	int estadorotizquierda = glfwGetKey(window, GLFW_KEY_A);
+
+	if(estadorotizquierda == GLFW_PRESS)
+	{
+		rotXtriangulo -= 24 * tiempoDiferencial;;
+	}
+
+	int estadorotderecha = glfwGetKey(window, GLFW_KEY_D);
+	
+	if (estadorotderecha == GLFW_PRESS)
+	{
+		rotXtriangulo += 24 * tiempoDiferencial;;
+	}
+
+	tiempoanterior = tiempoactual;
+
 }
 
 void dibujar() {
 	glPushMatrix();
 
 	glTranslatef(posXtriangulo, posYtriangulo,0.0f);
+
+	glRotatef(1.0f,0.0f, rotXtriangulo,0.0f);
 
 	glBegin(GL_TRIANGLES);
 
@@ -48,8 +120,6 @@ void dibujar() {
 
 int main()
 {
-	//Declarar una ventana
-	GLFWwindow*window;
 
 	//Si no se pudo iniciar GLFW 
 	//Terminamos ejecucion.
@@ -89,9 +159,12 @@ int main()
 	const GLubyte* versionGL = glGetString(GL_VERSION);
 	cout << "Version Opengl: " << versionGL;
 
+	tiempoactual = glfwGetTime();
+	tiempoactual = tiempoanterior;
+
 	//Establecemos que con cada evento de teclado
 	// Se llama a la funcion telcado_callback
-	glfwSetKeyCallback(window, teclado_callback);
+	//glfwSetKeyCallback(window, teclado_callback);
 
 	//Ciclo de dibujo (Draw Loop)
 	while (!glfwWindowShouldClose(window))
@@ -104,8 +177,10 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		//Actualizar valores y dibujar
 
-
 		dibujar();
+
+		actualizar();
+
 
 		glfwPollEvents();
 
